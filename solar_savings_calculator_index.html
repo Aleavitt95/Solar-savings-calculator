@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IID Solar Savings Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #007bff;
+        }
+        label {
+            font-size: 18px;
+            margin-bottom: 5px;
+            display: block;
+        }
+        input, select {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #dddddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        td {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>IID Solar Savings Calculator</h1>
+    <label for="electricityCost">Initial Monthly Electricity Cost ($):</label>
+    <input type="number" id="electricityCost" placeholder="Enter monthly electricity cost">
+
+    <label for="solarCost">Initial Monthly Solar Cost ($):</label>
+    <input type="number" id="solarCost" placeholder="Enter monthly solar cost">
+
+    <label for="solarIncrease">Annual Solar Cost Increase:</label>
+    <select id="solarIncrease">
+        <option value="0">0%</option>
+        <option value="0.0099">0.99%</option>
+        <option value="0.0199">1.99%</option>
+        <option value="0.0299">2.99%</option>
+        <option value="0.0359">3.59%</option>
+        <option value="0.0399">3.99%</option>
+    </select>
+
+    <button onclick="calculateSavings()">Calculate Savings</button>
+
+    <table id="resultsTable">
+        <thead>
+        <tr>
+            <th>Year</th>
+            <th>IID Monthly Cost</th>
+            <th>Solar Monthly Cost</th>
+            <th>Annual Savings</th>
+        </tr>
+        </thead>
+        <tbody id="resultsBody">
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function calculateSavings() {
+        const initialElectricityCost = parseFloat(document.getElementById("electricityCost").value);
+        const initialSolarCost = parseFloat(document.getElementById("solarCost").value);
+        const solarIncreaseRate = parseFloat(document.getElementById("solarIncrease").value);
+
+        if (isNaN(initialElectricityCost) || isNaN(initialSolarCost)) {
+            alert("Please enter valid numbers for the costs.");
+            return;
+        }
+
+        const annualIIDIncrease = 0.07;  // 7% IID increase
+        const years = 25;
+        let electricityCost = initialElectricityCost;
+        let solarCost = initialSolarCost;
+
+        const resultsBody = document.getElementById("resultsBody");
+        resultsBody.innerHTML = "";  // Clear previous results
+
+        for (let year = 1; year <= years; year++) {
+            const annualIIDCost = electricityCost * 12;
+            const annualSolarCost = solarCost * 12;
+            const savings = annualIIDCost - annualSolarCost;
+
+            // Add row to table
+            const row = `<tr>
+                            <td>${year}</td>
+                            <td>$${electricityCost.toFixed(2)}</td>
+                            <td>$${solarCost.toFixed(2)}</td>
+                            <td>$${savings.toFixed(2)}</td>
+                         </tr>`;
+            resultsBody.innerHTML += row;
+
+            // Update costs for next year
+            electricityCost *= (1 + annualIIDIncrease);
+            solarCost *= (1 + solarIncreaseRate);
+        }
+    }
+</script>
+
+</body>
+</html>
